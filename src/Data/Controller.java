@@ -28,7 +28,7 @@ public class Controller
     }
 
     /**
-     * Gets the team numbers setup from the window
+     * Gets the team numbers setup from the window yes
      * @return The team numbers in an integer array
      */
     public static int[] getTeamNumbers(){
