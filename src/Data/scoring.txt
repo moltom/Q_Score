@@ -1,0 +1,26 @@
+Scoring:
+Autonomous:
+    Beacons: 30 points each for your color (Also additional particle will be added before tele?)
+    Cap Ball (large): 5 points for touching floor
+    Particle: 15 points per particle through vortex (must reset on floor)
+    Particle: 5 points each going through ramp
+    Parking: 5 points per robot parked partially on ramp or vortex plate
+    Parking: 10 points per robot parked fully on ramp or vortex plate
+    -Additional particles earned are placed on field-
+
+Tele-op:
+    Particles: 5 points per particle through vortex
+    Particles: 1 point per particle through ramp
+
+End-Game:
+    Beacons: 10 points per beacon of alliance color at end of match
+    Cap-ball: 10 points if cap-ball is above playing field
+    Cap-ball: 20 points if cap-ball is above vortex crossbar
+    Cap-ball: 40 points if cap-ball is on vortex
+
+
+
+Plan:
+    Label with plus and minus button for Beacons
+
+
