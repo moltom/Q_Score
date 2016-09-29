@@ -31,6 +31,7 @@ public class main extends Application
     {
         //Set title of window
         primaryStage.setTitle("Q is Silqent Scoring");
+        primaryStage.setResizable(false);
         primaryStage.getIcons().add(new Image("file:src/Graphics/favicon.ico"));
 
         //button.setOnAction(e -> System.out.println("Lambda expression"));

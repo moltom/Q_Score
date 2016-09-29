@@ -24,6 +24,7 @@ public class TeamWindow
         teamWindow.setTitle("Teams");
         teamWindow.setMinWidth(250);
         teamWindow.setMinHeight(200);
+        teamWindow.setResizable(false);
         teamWindow.getIcons().add(new Image("file:src/Graphics/favicon.ico"));
 
         //-Team Boxes-

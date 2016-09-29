@@ -18,9 +18,10 @@ import static Utilities.util.parse;
 
 public class scoringWindow
 {
-    private static final int WIDTH = 800;
-    private static final int HEIGHT = 720;
+    private static final int WIDTH = 450;
+    private static final int HEIGHT = 500;
     private static final int FONT_SIZE = 20;
+    private static final int VERTICAL_SPACING = 6;
 
     private static Stage window  = new Stage();
     private static Scene Autonomous;
@@ -35,6 +36,7 @@ public class scoringWindow
         window.setTitle("Scoring");
         window.setMinWidth(WIDTH);
         window.setMinHeight(HEIGHT);
+        window.setResizable(false);
         window.getIcons().add(new Image("file:src/Graphics/favicon.ico"));
 
         //Setup scenes
@@ -54,7 +56,7 @@ public class scoringWindow
      * @param type The type of data it should increment in the data controller
      * @return A GUI HBox to add to a larger scene
      */
-    private static HBox Counter(String text, String type, int teamNum)
+    private static HBox Counter(String text, String type, int teamNum, int limit)
     {
         HBox contents = new HBox();
 
@@ -72,9 +74,11 @@ public class scoringWindow
             String end = box.getText().substring(length);
             String beg = text.substring(0, length);
             int newNumber = util.parse(end) + 1;
-            box.setText(beg + newNumber);
 
-            Controller.addData(teamNum, type, 1);
+            if(newNumber <= limit || limit == 0) {
+                box.setText(beg + newNumber);
+                Controller.addData(teamNum, type, 1);
+            }
         });
 
         //Minus button
@@ -87,9 +91,11 @@ public class scoringWindow
             String end = box.getText().substring(length);
             String beg = text.substring(0, length);
             int newNumber = parse(end) - 1;
-            box.setText(beg + newNumber);
 
-            Controller.addData(teamNum, type, -1);
+            if(newNumber <= limit || limit == 0) {
+                box.setText(beg + newNumber);
+                Controller.addData(teamNum, type, -1);
+            }
         });
 
         contents.getChildren().addAll(plus, minus, box);
@@ -177,47 +183,50 @@ public class scoringWindow
         int subWidth = WIDTH / 2;
 
         VBox VB = new VBox();
+        VB.setSpacing(VERTICAL_SPACING);
         VB.setMinWidth(subWidth);
 
         Label TEAM = new Label(" "+teamNumber);
         TEAM.setFont(Font.font(FONT_SIZE));
 
-        HBox ct1 = Counter("High: 0", "autoHighParticle", teamNumber);
-        HBox ct2 = Counter("Ramp: 0", "autoLowParticle", teamNumber);
-        HBox ct3 = Counter("Beacons: 0", "autoBeacons", teamNumber);
+        //COUNTERS
+        HBox ct1 = Counter("High: 0", "autoHighParticle", teamNumber, 0);
+        HBox ct2 = Counter("Ramp: 0", "autoLowParticle", teamNumber, 0);
+        //@TODO Make it so it removes beacons from the other team
+        HBox ct3 = Counter("Beacons: 0", "autoBeacons", teamNumber, 4);
 
-        CheckBox cb1 = new CheckBox("Partial Park");
-        CheckBox cb2 = new CheckBox("Full Park");
+        //BLACK LINE
+        Rectangle line = new Rectangle((double) subWidth, 1.0);
 
-        //Checkbox #1 for partial park
-        cb1.setOnAction(e -> {
-            if(cb1.isSelected()) {
-                Controller.addData(teamNumber, "parkPartial", 1);
-                cb2.setSelected(false);
-                Controller.addData(teamNumber, "parkFull", -1);
-            }
-            else
-                Controller.addData(teamNumber, "parkPartial", -1);
+        //RADIO BUTTONS
+        ToggleGroup group = new ToggleGroup();
+
+        RadioButton rb1 = new RadioButton("Not Parked");
+        rb1.setToggleGroup(group);
+        rb1.setSelected(true);
+        rb1.setOnAction(e -> {
+            Controller.addData(teamNumber, "parkPartial", -1);
+            Controller.addData(teamNumber, "parkFull", -1);
         });
-        cb1.setAlignment(Pos.CENTER);
 
-        //Checkbox #2 for full park
-        cb2.setOnAction(e -> {
-            if(cb2.isSelected()) {
-                Controller.addData(teamNumber, "parkFull", 1);
-                cb1.setSelected(false);
-                Controller.addData(teamNumber, "parkPartial", -1);
-            }
-            else
-                Controller.addData(teamNumber, "parkFull", -1);
+        RadioButton rb2 = new RadioButton("Partial Park");
+        rb2.setToggleGroup(group);
+        rb2.setOnAction(e -> {
+            Controller.addData(teamNumber, "parkPartial", 1);
+            Controller.addData(teamNumber, "parkFull", -1);
         });
-        cb2.setAlignment(Pos.CENTER);
+
+        RadioButton rb3 = new RadioButton("Full Park");
+        rb3.setToggleGroup(group);
+        rb3.setOnAction(e -> {
+            Controller.addData(teamNumber, "parkPartial", -1);
+            Controller.addData(teamNumber, "parkFull", 1);
+        });
 
         //Checkbox #3 for cap ball
         CheckBox cb3 = Checkbox("Cap Ball Moved","autoCapBall", teamNumber);
 
-        VB.getChildren().addAll(TEAM,ct1,ct2,ct3,cb3,cb1,cb2);
-        VB.setSpacing(3);
+        VB.getChildren().addAll(TEAM,ct1,ct2,ct3,line,cb3,rb1,rb2,rb3);
         VB.setAlignment(Pos.CENTER_LEFT);
         return VB;
     }
@@ -250,15 +259,16 @@ public class scoringWindow
         int subWidth = WIDTH / 2;
 
         VBox VB = new VBox();
+        VB.setSpacing(VERTICAL_SPACING);
         VB.setMinWidth(subWidth);
 
         //CONTENT
         Label tLab = new Label(" "+teamNumber);
         tLab.setFont(Font.font(FONT_SIZE));
 
-        HBox ct1 = Counter("High: 0", "highParticle", teamNumber);
-        HBox ct2 = Counter("Ramp: 0", "lowParticle", teamNumber);
-        HBox ct3 = Counter("Beacons: 0", "beacon", teamNumber);
+        HBox ct1 = Counter("High: 0", "highParticle", teamNumber, 0);
+        HBox ct2 = Counter("Ramp: 0", "lowParticle", teamNumber, 0);
+        HBox ct3 = Counter("Beacons: 0", "beacon", teamNumber, 4);
         Rectangle line = new Rectangle((double) subWidth, 1.0);
 
         //Cap ball heights
@@ -299,7 +309,6 @@ public class scoringWindow
         //-------
 
         VB.getChildren().addAll(tLab, ct1, ct2, ct3, line, rb1, rb2, rb3, rb4);
-        VB.setSpacing(5);
         VB.setAlignment(Pos.CENTER_LEFT);
         return VB;
     }
